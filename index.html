@@ -639,7 +639,7 @@
         <div class="stage-ring ring-a"></div>
         <div class="stage-ring ring-b"></div>
 
-        <img id="characterImage" alt="캐릭터 이미지" role="button" tabindex="0" aria-label="캐릭터 음성 재생 및 진입 애니메이션 다시 보기" />
+        <img id="characterImage" alt="캐릭터 이미지" role="button" tabindex="0" aria-label="캐릭터 진입 애니메이션 다시 보기" />
 
         <div class="image-error" id="imageError"></div>
         <div class="floor-glow"></div>
@@ -672,9 +672,6 @@
       /
       ├─ index.html
       ├─ character.png
-      ├─ voice_01.mp3
-      ├─ voice_02.mp3
-      └─ voice_03.mp3
 
       중요:
       - 파일명은 GitHub에서 대소문자를 구분합니다.
@@ -758,23 +755,7 @@
       ],
 
       footerLeft: "ARCHIVE // CHARACTER DATABASE",
-      footerRight: "SYSTEM READY",
-
-      /*
-        캐릭터 클릭 음성
-
-        캐릭터 이미지를 클릭할 때마다
-        목록 중 하나를 무작위로 1개 선택해 재생합니다.
-
-        동시에 캐릭터 진입 애니메이션도 처음부터 다시 재생됩니다.
-
-        실제 파일명에 맞게 수정하세요.
-      */
-      introAudios: [
-        "voice_01.mp3",
-        "voice_02.mp3",
-        "voice_03.mp3"
-      ]
+      footerRight: "SYSTEM READY"
     };
 
     /*
@@ -812,7 +793,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 680">
           <defs>
             <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#ff5757" stop-opacity=".23"/>
+              <stop offset="0" stop-color="#58a6ff" stop-opacity=".23"/>
               <stop offset="1" stop-color="#ffffff" stop-opacity=".03"/>
             </linearGradient>
           </defs>
@@ -824,20 +805,20 @@
             cy="165"
             r="82"
             fill="url(#g)"
-            stroke="#ff5757"
+            stroke="#58a6ff"
             stroke-opacity=".42"
           />
 
           <path
             d="M155 595c12-167 35-287 105-287s93 120 105 287z"
             fill="url(#g)"
-            stroke="#ff5757"
+            stroke="#58a6ff"
             stroke-opacity=".42"
           />
 
           <path
             d="M130 390l-62 142M390 390l62 142M205 590l-38 85M315 590l38 85"
-            stroke="#ff5757"
+            stroke="#58a6ff"
             stroke-width="26"
             stroke-linecap="round"
             stroke-opacity=".34"
@@ -847,7 +828,7 @@
             x="260"
             y="645"
             text-anchor="middle"
-            fill="#ff5757"
+            fill="#58a6ff"
             font-size="18"
             font-family="Arial"
             opacity=".8"
@@ -979,97 +960,26 @@
       });
 
       /* ----------------------------------------------------------
-         캐릭터 클릭 → 애니메이션 재생 + 랜덤 음성 1개 재생
-      ----------------------------------------------------------
-
-         브라우저 자동재생 정책 때문에 진입 직후 음성은 재생하지 않습니다.
-         대신 사용자가 캐릭터 이미지를 클릭하면 사용자 제스처가 생기므로
-         Chrome / Firefox / Edge / GitHub Pages에서도 훨씬 안정적으로 재생됩니다.
-
-         최초 페이지 진입:
-         - 캐릭터 애니메이션 1회
-         - 음성은 재생하지 않음
-
-         캐릭터 클릭:
-         - 진입 애니메이션 다시 시작
-         - introAudios 중 랜덤 1개 재생
+         캐릭터 클릭 → 진입 애니메이션만 다시 재생
+         음성 / 이벤트 기능 없음
       ---------------------------------------------------------- */
-
-      const audioPaths = Array.isArray(CHARACTER.introAudios)
-        ? CHARACTER.introAudios
-            .filter((path) => typeof path === "string")
-            .map((path) => path.trim())
-            .filter(Boolean)
-        : [];
-
-      let currentAudio = null;
 
       const restartCharacterAnimation = () => {
         image.classList.remove("intro-pop");
 
-        // 브라우저가 동일 애니메이션을 즉시 다시 재생하도록 reflow 발생
+        // 같은 애니메이션을 즉시 다시 재생하기 위한 reflow
         void image.offsetWidth;
 
         image.classList.add("intro-pop");
       };
 
-      const stopCurrentAudio = () => {
-        if (!currentAudio) return;
-
-        currentAudio.pause();
-
-        try {
-          currentAudio.currentTime = 0;
-        } catch (_) {}
-
-        currentAudio = null;
-      };
-
-      const playRandomVoice = async () => {
-        if (audioPaths.length === 0) {
-          console.warn(
-            "재생할 음성이 없습니다. CHARACTER.introAudios에 파일명을 추가하세요."
-          );
-          return;
-        }
-
-        const randomPath =
-          audioPaths[
-            Math.floor(Math.random() * audioPaths.length)
-          ];
-
-        stopCurrentAudio();
-
-        currentAudio = new Audio(resolveAsset(randomPath));
-        currentAudio.preload = "auto";
-        currentAudio.volume = 1;
-
-        try {
-          await currentAudio.play();
-        } catch (error) {
-          console.warn(
-            "음성 파일을 재생하지 못했습니다:",
-            randomPath,
-            error
-          );
-
-          alert(
-            `음성 파일을 재생하지 못했습니다.\n\n` +
-            `파일: ${randomPath}\n\n` +
-            `GitHub의 실제 파일명, 대소문자, 확장자와 ` +
-            `CHARACTER.introAudios 값을 확인하세요.`
-          );
-        }
-      };
-
-      const activateCharacter = async () => {
+      const activateCharacter = () => {
         restartCharacterAnimation();
-        await playRandomVoice();
       };
 
       image.addEventListener("click", activateCharacter);
 
-      // 키보드 Enter / Space로도 동일하게 작동
+      // 키보드 Enter / Space도 동일하게 작동
       image.addEventListener("keydown", (event) => {
         if (event.key !== "Enter" && event.key !== " ") return;
 

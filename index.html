@@ -62,7 +62,7 @@
       grid-template-columns: minmax(260px, .92fr) minmax(330px, 1.3fr) minmax(300px, 1fr);
       gap: clamp(16px, 2vw, 34px);
       padding: clamp(72px, 5vw, 88px) clamp(28px, 5vw, 76px) clamp(58px, 4vw, 72px);
-      overflow: visible;
+      overflow: hidden;
       box-shadow: none;
     }
 
@@ -93,19 +93,14 @@
     .right-panel,
     .character-stage {
       position: relative;
+      z-index: 2;
       min-width: 0;
     }
 
-    /* 설명 패널은 캐릭터보다 앞에 표시 */
     .left-panel,
     .right-panel {
-      z-index: 5;
       align-self: center;
-    }
-
-    /* 캐릭터 영역은 설명 패널 뒤 레이어 */
-    .character-stage {
-      z-index: 1;
+      z-index: 4;
     }
 
     .eyebrow,
@@ -154,14 +149,7 @@
     }
 
     .stat-block {
-      position: relative;
-      z-index: 6;
       margin: 22px 0;
-      padding: 13px 14px 12px;
-      border: 1px solid rgba(255,255,255,.08);
-      background: rgba(11,16,23,.38);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
     }
 
     .stat-head {
@@ -230,15 +218,12 @@
     }
 
     .bio-card {
-      position: relative;
-      z-index: 6;
       margin-top: 28px;
       padding: 16px 17px;
-      border: 1px solid rgba(255,255,255,.11);
-      background: rgba(15,22,32,.56);
-      backdrop-filter: blur(7px);
-      -webkit-backdrop-filter: blur(7px);
-      box-shadow: 0 10px 28px rgba(0,0,0,.14);
+      border: 1px solid var(--line);
+      background: rgba(15,22,32,.64);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
     }
 
     .bio-card p {
@@ -251,7 +236,7 @@
       align-items: flex-end;
       justify-content: center;
       isolation: isolate;
-      overflow: visible;
+      z-index: 1;
     }
 
     .character-stage::after {
@@ -270,17 +255,15 @@
 
     #characterImage {
       position: relative;
-      z-index: 2;
+      z-index: 3;
       display: block;
-
-      /* 기존보다 약 1.4~1.5배 크게 보이도록 확대 */
-      width: min(145%, 760px);
-      max-height: 860px;
-
+      width: min(125%, 650px);
+      max-height: 700px;
       object-fit: contain;
       object-position: center bottom;
       filter: drop-shadow(0 24px 22px rgba(0,0,0,.42));
       transform-origin: center bottom;
+      scale: 1.4;
       user-select: none;
       -webkit-user-drag: none;
       cursor: pointer;
@@ -400,15 +383,11 @@
 
     .section-card {
       position: relative;
-      z-index: 6;
       padding: 16px 16px 15px 18px;
-      border: 1px solid rgba(255,255,255,.11);
-
-      /* 뒤의 캐릭터가 살짝 비쳐 보이는 반투명 패널 */
-      background: rgba(15,22,32,.52);
-      backdrop-filter: blur(7px);
-      -webkit-backdrop-filter: blur(7px);
-      box-shadow: 0 10px 28px rgba(0,0,0,.14);
+      border: 1px solid var(--line);
+      background: rgba(15,22,32,.60);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
       overflow: hidden;
     }
 
@@ -575,14 +554,7 @@
       }
 
       #characterImage {
-        width: min(125%, 560px);
-        max-height: 560px;
-      }
-
-      .stat-block,
-      .bio-card,
-      .section-card {
-        background-color: rgba(11,16,23,.68);
+        max-height: 520px;
       }
 
       .ring-a {
